@@ -18,7 +18,10 @@ sayings$text <- sayings$text %>% # standardize the words
   str_replace_all(c( "what" = "wut", " are " = "r", "love" = "luv", " for " = "4", "too " = "2", " to " = "2", "your" = "ur", "you're" = "ur", "thanks" = "thx", "night" = "nite", " you are " = "ur", "you " = "u "))
 
 emails <- hearts %>%
-  gs_read(ws = 3)
+  gs_read(ws = 3) %>%
+  filter(!name %in% c("Ruth", "Millie")) %>%
+  mutate(email = address) %>%
+  select(-address)
 
 
 model <- generate_markovify_model( # build the text model
