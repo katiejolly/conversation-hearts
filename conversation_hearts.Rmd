@@ -1,0 +1,96 @@
+---
+title: "A Valentine's Day special"
+author: "Katie Jolly"
+date: "February 11, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path = "figs/", message = FALSE, warning = FALSE)
+```
+
+```{r}
+library(magick)
+library(googlesheets)
+library(markovifyR)
+library(ponyexpress)
+library(stringr)
+```
+
+```{r}
+heart <- image_read("pink-heart.png")
+
+heart %>%
+  image_scale("600") %>%
+  image_annotate("happy valentine's day!", color = "white", gravity = "center", size = 50) 
+```
+
+```{r}
+hearts <- gs_title("conversation_hearts")
+
+sayings <- hearts %>%
+  gs_read(ws = 1) 
+
+replacements <- hearts %>%
+  gs_read(ws = 2)
+  
+sayings$text <- sayings$text %>% # standardize the words
+  str_replace_all("[[:punct:]]", "") %>%
+  str_replace_all(c( "what" = "wut", " are " = "r", " love " = "luv", " for " = "4", "too " = "2", " to " = "2", "your" = "ur", "you're" = "ur", "thanks" = "thx", "night" = "nite", " you are " = "ur", " you " = "u"))
+
+emails <- hearts %>%
+  gs_read(ws = 3)
+```
+
+```{r}
+model <- generate_markovify_model( # build the text model
+  input_text = sayings$text,
+  max_overlap_ratio = 0.85,
+  max_overlap_total = 40
+)
+```
+
+```{r}
+texts_to_annotate <- markovify_text( # make the strings
+  markov_model = model,
+  maximum_sentence_length = NULL,
+  output_column_name = 'heart_sayings',
+  count = 75,
+  tries = 100,
+  only_distinct = TRUE,
+  return_message = TRUE
+)
+```
+
+```{r}
+heart %>%
+  image_scale("600") %>%
+  image_annotate(texts_to_annotate$heart_sayings[[7]], color = "white", gravity = "center", size = 40) %>%
+  image_write(path = "example.png", format = "png")
+```
+
+```{r}
+path = paste0(str_to_lower(emails$name[[3]]), ".png")
+```
+
+```{r}
+create_heart <- function(){
+  model <- generate_markovify_model( # build the text model
+  input_text = sayings$text,
+  max_overlap_ratio = 0.80,
+  max_overlap_total = 35)
+  
+  texts_to_annotate <- markovify_text( # make the strings
+  markov_model = model,
+  maximum_sentence_length = NULL,
+  output_column_name = 'heart_sayings',
+  count = 200,
+  tries = 500,
+  only_distinct = TRUE,
+  return_message = TRUE)
+  
+  final <- sample_n(texts_to_annotate, nrow(emails), replace = TRUE)
+  
+  emails$text <- final
+}
+```
