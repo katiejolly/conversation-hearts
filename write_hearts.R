@@ -67,8 +67,8 @@ emails$path <- all_paths
 
 github_paths <- c()
 
-for (i in 1:nrow(emails)){
-  p <- paste0("https://raw.githubusercontent.com/katiejolly/conversation-hearts/master/images/", emails$name[[1]], ".png")
+for (i in 1:nrow(df)){
+  p <- paste0("https://raw.githubusercontent.com/katiejolly/conversation-hearts/master/images/", emails$name[[i]], ".png")
   github_paths <- c(github_paths, p)
 }
 

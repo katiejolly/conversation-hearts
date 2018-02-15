@@ -2,6 +2,8 @@ library(ponyexpress) # send the emails
 
 body <- "Dear {name},
 
+
+
 Happy Valentine's Day!! We made a special heart just for you :D
 
 <img src = '{github_paths}'> </img>
@@ -21,14 +23,16 @@ Katie, Pippa, and Matthew
 
 df <- emails
 
-df <- rbind(df, c("Katie Jolly", "katiejolly6@gmail.com", "", "", ""))
+df <- rbind(emails, c("Katie Jolly", "katiejolly6@gmail.com", "", ""))
 
 our_template <- glue::glue(glitter_template)
 
-parcel <- parcel_create(df,
+parcel <- parcel_create(emails,
                         sender_name = "Katie Jolly",
                         sender_email = "katiejolly6@gmail.com",
                         subject = "a valentine for you!",
                         template = our_template)
 
 parcel_preview(parcel)     
+
+parcel_send(parcel)
