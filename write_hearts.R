@@ -1,7 +1,6 @@
 library(magick) # image processing
 library(googlesheets) # load the data
 library(markovifyR) # create markov chain texts
-library(ponyexpress) # send the emails
 library(tidyverse) # clean the text
 
 heart <- image_read("C:\\Users\\katie\\Documents\\fun_projects\\conversation_hearts\\pink-heart.png")
@@ -52,7 +51,7 @@ heart %>%
 all_paths <- c()
 
 for (i in 1:nrow(emails)){
-  path <- paste0("C:\\Users\\katie\\Documents\\fun_projects\\conversation_hearts\\images\\", emails$name[[i]], ".png")
+  path <- paste0("C:\\Users\\katie\\Documents\\conversation_hearts\\images\\", emails$name[[i]], ".png")
   all_paths <- c(all_paths, path)
   img <- heart %>%
             image_scale("600") %>%
@@ -62,4 +61,15 @@ for (i in 1:nrow(emails)){
 }
 
 emails$path <- all_paths
+
+github_paths <- c()
+
+for (i in 1:nrow(emails)){
+  p <- paste0("https://raw.githubusercontent.com/katiejolly/conversation-hearts/master/images/", emails$name[[1]], ".png")
+  github_paths <- c(github_paths, p)
+}
+
+emails$github_paths <- github_paths # add github paths to images
+
+emails[2, 2] <- "mlh3wb@virginia.edu" # fix M's email
 
